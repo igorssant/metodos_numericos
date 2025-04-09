@@ -44,3 +44,27 @@ class FalsePosition:
                 fu = fX
 
         return x
+    
+    @property
+    def xl(self) -> np.float64:
+        return self.__xl
+
+    @property
+    def xu(self) -> np.float64:
+        return self.__xu
+
+    @property
+    def max_iter(self) -> int:
+        return self.__max_iter
+
+    @xl.setter
+    def xl(self, xl: np.float64) -> None:
+        self.__xl = xl
+
+    @xu.setter
+    def xu(self, xu: np.float64) -> None:
+        self.__xu = xu
+
+    @max_iter.setter
+    def max_iter(self, max_iter: int) -> None:
+        self.__max_iter = max_iter
