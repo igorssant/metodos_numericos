@@ -16,8 +16,8 @@ class NewtonRaphson:
         while (absoluteError > self.__tol) and (iter < self.__max_iter):
             self.__x0  = x
             iter = iter + 1
-            x = self.__x0 - (evaluate_one_variable(self.func, self.__x0) /
-                            evaluate_one_variable(self.derivative, self.__x0))
+            x = self.__x0 - (evaluate_one_variable(func, self.__x0) /
+                            evaluate_one_variable(derivative, self.__x0))
             
             if x != np.float64(0.0):
                 absoluteError = abs((x - self.__x0) / x) * 100

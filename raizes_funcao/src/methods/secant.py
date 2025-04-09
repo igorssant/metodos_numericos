@@ -14,8 +14,8 @@ class Secant:
         
         while (relative_error > self.__tol) and (iter < self.__max_iter):
             iter = iter + 1
-            f0:np.float64 = evaluate_one_variable(self._function, self.__x0)
-            f1:np.float64 = evaluate_one_variable(self._function, self.__x1)
+            f0:np.float64 = evaluate_one_variable(func, self.__x0)
+            f1:np.float64 = evaluate_one_variable(func, self.__x1)
             x:np.float64 = self.__x1 - f1 * ((self.__x0 - self.__x1) / (f0 - f1))
             
             if x != np.float64(0.0):
