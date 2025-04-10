@@ -8,19 +8,20 @@ class FixedPoint:
         self.__tol:np.float64 = tol
         self.__max_iter:int = max_iter
 
-    def executeMethod(self, func: Union[str, Callable]) -> np.float64:
+    def execute_method(self, func: Union[str, Callable]) -> np.float64:
         iter:int = 0
         relative_error:np.float64 = np.float64(100.0)
         x:np.float64 = self.__x0
-        
+
         while (relative_error > self.__tol) and (iter < self.__max_iter):
             x_old:np.float64 = x
             iter = iter + 1
+
             x = evaluate_one_variable(func, x_old)
-            
+
             if x != np.float64(0.0):
                 relative_error = abs((x - x_old) / x) * 100
-                
+
         return x
 
     @property

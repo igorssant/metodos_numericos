@@ -8,21 +8,27 @@ class NewtonRaphson:
         self.__tol:np.float64 = tol
         self.__max_iter:int = max_iter
 
-    def executeMethod(self, func:Union[str, Callable], derivative:Union[str, Callable]) -> np.float64:
+    def execute_method(self, func:Union[str, Callable], derivative:Union[str, Callable]) -> np.float64:
         iter:int = 0
-        absoluteError:np.float64 = np.float64(100.0)
+        relative_error:np.float64 = np.float64(100.0)
         x:np.float64 = self.__x0
-        
-        while (absoluteError > self.__tol) and (iter < self.__max_iter):
+
+        while (relative_error > self.__tol) and (iter < self.__max_iter):
             self.__x0  = x
             iter = iter + 1
+<<<<<<< HEAD
             x = self.__x0 - (evaluate_one_variable(func, self.__x0) /
                             evaluate_one_variable(derivative, self.__x0))
+=======
+>>>>>>> 5a3cb38 (feat: extend _parser para reconhecer expresões numpy)
             
+            x = self.__x0 - (evaluate_one_variable(func, self.__x0) /
+                            evaluate_one_variable(derivative, self.__x0))
+
             if x != np.float64(0.0):
-                absoluteError = abs((x - self.__x0) / x) * 100
-                
-        self._result = x
+                relative_error = abs((x - self.__x0) / x) * 100
+
+        return x
 
     @property
     def x0(self) -> np.float64:
