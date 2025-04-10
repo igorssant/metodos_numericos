@@ -18,8 +18,8 @@ def bissection(
 
     while (relative_error > tol) and (iter < max_iter):
         x_old: np.float64 = x
-        x = (xl + xu) / 2
 
+        x = (xl + xu) / 2
         fx: np.float64 = evaluate_one_variable(func, x)
 
         iter = iter + 1
@@ -33,7 +33,7 @@ def bissection(
             xl = x
             fl = fx
 
-    return x
+    return x, relative_error, iter, xl, xu
 
 
 def false_position(
@@ -73,4 +73,4 @@ def false_position(
             xu = x
             fu = fX
 
-    return x
+    return x, relative_error, iter, xl, xu
