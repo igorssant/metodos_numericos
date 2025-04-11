@@ -33,7 +33,7 @@ def bissection(
             xl = x
             fl = fx
 
-    return x, relative_error, iter, xl, xu
+    return x, xl, xu, relative_error, iter
 
 
 def false_position(
@@ -73,4 +73,4 @@ def false_position(
             xu = x
             fu = fX
 
-    return x, relative_error, iter, xl, xu
+    return x, xl, xu, relative_error, iter

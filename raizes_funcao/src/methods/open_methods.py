@@ -5,7 +5,7 @@ from typing import Union, Callable
 
 def fixed_point(
     func: Union[str, Callable], x0: np.float64, tol: np.float64, max_iter: int
-) -> np.float64:
+) -> tuple[np.float64, np.float64, np.float64, int]:
     """
     Método do Ponto Fixo para encontrar raízes de uma função.
 
@@ -16,12 +16,16 @@ def fixed_point(
         max_iter (int): O número máximo de iterações.
 
     Retorna:
-        np.float64: A raiz encontrada.
+        - A raiz encontrada (np.float64)
+        - O último valor de x (np.float64)
+        - O erro relativo (np.float64)
+        - O número de iterações (int)
     """
 
     iter: int = 0
     relative_error: np.float64 = np.float64(100.0)
     x: np.float64 = x0
+    x_old: np.float64 = x
 
     while (relative_error > tol) and (iter < max_iter):
         x_old: np.float64 = x
@@ -32,7 +36,7 @@ def fixed_point(
         if x != np.float64(0.0):
             relative_error = abs((x - x_old) / x) * 100
 
-    return x
+    return x, x_old, relative_error, iter
 
 
 def newton_raphson(
@@ -41,7 +45,7 @@ def newton_raphson(
     x0: np.float64,
     tol: np.float64,
     max_iter: int,
-) -> np.float64:
+) -> tuple[np.float64, np.float64, np.float64, int]:
     """
     Método de Newton-Raphson para encontrar raízes de uma função.
 
@@ -53,7 +57,10 @@ def newton_raphson(
         max_iter (int): O número máximo de iterações.
 
     Retorna:
-        np.float64: A raiz encontrada.
+        - A raiz encontrada (np.float64)
+        - O último valor de x (np.float64)
+        - O erro relativo (np.float64)
+        - O número de iterações (int)
     """
 
     iter: int = 0
@@ -63,10 +70,6 @@ def newton_raphson(
     while (relative_error > tol) and (iter < max_iter):
         x0 = x
         iter = iter + 1
-        
-        x = x0 - (
-            evaluate_one_variable(func, x0) / evaluate_one_variable(derivative, x0)
-        )
 
         x = x0 - (
             evaluate_one_variable(func, x0) / evaluate_one_variable(derivative, x0)
@@ -75,7 +78,7 @@ def newton_raphson(
         if x != np.float64(0.0):
             relative_error = abs((x - x0) / x) * 100
 
-    return x
+    return x, x0, relative_error, iter
 
 
 def secant(
@@ -84,7 +87,7 @@ def secant(
     x1: np.float64,
     tol: np.float64,
     max_iter: int,
-) -> np.float64:
+) -> tuple[np.float64, np.float64, np.float64, int]:
     """
     Método da Secante para encontrar raízes de uma função.
 
@@ -96,7 +99,11 @@ def secant(
         max_iter (int): O número máximo de iterações.
 
     Retorna:
-        np.float64: A raiz encontrada.
+        - A raiz encontrada (np.float64)
+        - O último valor de x0 (np.float64)
+        - O último valor de x1 (np.float64)
+        - O erro relativo (np.float64)
+        - O número de iterações (int)
     """
 
     relative_error: np.float64 = np.float64(100.0)
@@ -117,4 +124,4 @@ def secant(
         x0 = x1
         x1 = x
 
-    return x
+    return x, x0, x1, relative_error, iter
