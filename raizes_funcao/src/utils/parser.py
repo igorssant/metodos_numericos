@@ -2,7 +2,7 @@ import numpy as np
 import sympy as sy
 from typing import Union, Callable
 
-def _parse(function:str) -> sy.Expr:
+def __parse(function:str) -> sy.Expr:
     """
     Converte uma string de função em um objeto sympy.
     A função deve ser uma string que representa uma expressão matemática.
@@ -34,7 +34,7 @@ def evaluate_one_variable(function: Union[str, Callable], x0:np.float64) -> np.f
             raise ValueError("A função deve conter a variável 'x'.")
 
         symbol_x:sy.Symbol = sy.Symbol("x")
-        parsed_function:sy.Expr = _parse(function)
+        parsed_function:sy.Expr = __parse(function)
         result = parsed_function.subs(symbol_x, x0).evalf(17)
 
     elif isinstance(function, Callable):

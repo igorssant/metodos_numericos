@@ -1,7 +1,7 @@
 import numpy as np
 from utils.parser import evaluate_one_variable
 from typing import Union, Callable
-
+from utils.math_problems import is_indertemination
 
 def fixed_point(
     func: Union[str, Callable], x0: np.float64, tol: np.float64, max_iter: int
@@ -115,6 +115,9 @@ def secant(
 
         f0: np.float64 = evaluate_one_variable(func, x0)
         f1: np.float64 = evaluate_one_variable(func, x1)
+        
+        if is_indertemination(f0, f1):
+            return np.inf, x0, x1, relative_error, iter
 
         x: np.float64 = x1 - f1 * ((x0 - x1) / (f0 - f1))
 

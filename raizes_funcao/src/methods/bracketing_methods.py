@@ -1,7 +1,7 @@
 import numpy as np
 from utils.parser import evaluate_one_variable
 from typing import Union, Callable
-
+from utils.math_problems import is_indertemination
 
 def bissection(
     func: Union[str, Callable],
@@ -45,9 +45,8 @@ def false_position(
 ) -> np.float64:
     x: np.float64 = np.float64(0.0)
     iter: int = 0
-
     relative_error: np.float64 = np.float64(100.0)
-
+    
     fl: np.float64 = evaluate_one_variable(func, xl)
     fu: np.float64 = evaluate_one_variable(func, xu)
 
@@ -59,6 +58,10 @@ def false_position(
     while (relative_error > tol) and (iter < max_iter):
         x_old: np.float64 = x
         iter = iter + 1
+        
+        if is_indertemination(fu, fl):
+            return np.inf, xl, xu, relative_error, iter
+        
         x = xu + (fu * (xl - xu)) / (fu - fl)
 
         fX: np.float64 = evaluate_one_variable(func, x)
