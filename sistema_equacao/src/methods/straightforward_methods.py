@@ -127,8 +127,58 @@ def gaussian_elimination_partial_pivoting_scaled(augmented_matrix:NDArray) -> ND
     
     return solution_array
 
-def gaussian_elimination_full(augmented_matrix:NDArray) -> NDArray:
-    pass
+def gaussian_elimination_full_pivoting(augmented_matrix:NDArray) -> NDArray:
+    n_rows: int = augmented_matrix.shape[0]
+    n_cols: int = augmented_matrix.shape[1]
+    solution_array: NDArray = np.zeros(n_cols-1, dtype=np.float64)
+    row_permutation: list[int] = list(range(n_rows))
+    col_permutation: list[int] = list(range(n_cols - 1))
+    solution_array:NDArray = np.zeros(n_cols - 1, dtype=np.float64)
+
+    for i in range(n_cols - 1):
+        pivot_row:int = i
+        pivot_col:int = i
+        max_abs_pivot:np.float64 = np.abs(augmented_matrix[row_permutation[i], i])
+
+        for row in range(i, n_rows):
+            for column in range(i, n_cols - 1):
+                current_abs_pivot:np.float64 = np.abs(augmented_matrix[row_permutation[row], column])
+
+                if max_abs_pivot < current_abs_pivot:
+                    max_abs_pivot = current_abs_pivot
+                    pivot_row = row
+                    pivot_col = column
+
+        if np.isclose(max_abs_pivot, np.float64(0.0)):
+            raise ArithmeticError("Não existe solução única.")
+
+        if i != pivot_row:
+            row_permutation[i], row_permutation[pivot_row] = row_permutation[pivot_row], row_permutation[i]
+
+        if i != pivot_col:
+            augmented_matrix[:, [i, pivot_col]] = augmented_matrix[:, [pivot_col, i]]
+            col_permutation[i], col_permutation[pivot_col] = col_permutation[pivot_col], col_permutation[i]
+
+        for j in range(i + 1, n_rows):
+            factor:np.float64 = augmented_matrix[row_permutation[j], i] / augmented_matrix[row_permutation[i], i]
+            
+            for k in range(i, n_cols):
+                augmented_matrix[row_permutation[j], k] = augmented_matrix[row_permutation[j], k] - factor * augmented_matrix[row_permutation[i], k]
+
+    if np.isclose(augmented_matrix[row_permutation[n_rows - 1], n_cols - 2], np.float64(0.0)):
+        raise ArithmeticError("Não existe solução única (matriz singular na substituição).")
+    
+    solution_array[n_cols - 2] = augmented_matrix[row_permutation[n_rows - 1], n_cols - 1] / augmented_matrix[row_permutation[n_rows - 1], n_cols - 2]
+
+    for i in range(n_cols - 3, -1, -1):
+        summ:np.float64 = np.float64(0.0)
+        
+        for j in range(i + 1, n_cols-1):
+            summ += augmented_matrix[row_permutation[i], j] * solution_array[j]
+        
+        solution_array[i] = (augmented_matrix[row_permutation[i], n_cols - 1] - summ) / augmented_matrix[row_permutation[i], i]
+
+    return solution_array
 
 def LU_factoring(square_matrix:NDArray) -> Tuple[NDArray, NDArray]:
     length:int = square_matrix.shape[0]
