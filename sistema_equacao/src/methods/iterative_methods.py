@@ -2,12 +2,9 @@ from numpy.typing import NDArray
 import numpy as np
 
 def __calculate_error(xi:NDArray, x0:NDArray) -> np.float64:
-    error_array:NDArray = np.zeros((xi.shape[0], 1), dtype=np.float64)
+    error_array:NDArray = np.abs((xi - x0) / xi)
     
-    for i in range(xi.shape[0]):
-        error_array[i] = abs((xi[i] - x0[i]) / xi[i])
-        
-    return error_array.max()
+    return np.max(error_array)
 
 def jacobi(augmented_matrix:NDArray, tol:np.float64, max_iter:int) -> NDArray:
     n_rows:int = augmented_matrix.shape[0]
@@ -29,7 +26,7 @@ def jacobi(augmented_matrix:NDArray, tol:np.float64, max_iter:int) -> NDArray:
             for j in range(i):
                 summ += augmented_matrix[i, j] * initial_guess[j]
                 
-            for j in range(i + 1, n_cols - 2):
+            for j in range(i + 1, n_cols - 1):
                 summ += augmented_matrix[i, j] * initial_guess[j]
             
             variable_values[i] = (augmented_matrix[i, n_cols - 1] - summ) / augmented_matrix[i, i]
@@ -38,6 +35,7 @@ def jacobi(augmented_matrix:NDArray, tol:np.float64, max_iter:int) -> NDArray:
             return variable_values
         
         iter += 1
+        initial_guess = np.copy(variable_values)
             
     raise RuntimeError("O método de Jacobi não convergiu após ", max_iter, " iterações.")
 
