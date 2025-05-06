@@ -72,6 +72,12 @@ def gaussian_elimination_partial_pivoting(augmented_matrix:NDArray) -> NDArray:
     
     return solution_array
 
+def gaussian_elimination_partial_pivoting_scaled(augmented_matrix:NDArray) -> NDArray:
+    pass
+
+def gaussian_elimination_full(augmented_matrix:NDArray) -> NDArray:
+    pass
+
 def LU_factoring(square_matrix:NDArray) -> Tuple[NDArray, NDArray]:
     length:int = square_matrix.shape[0]
     L:NDArray = np.zeros((length, length), dtype=np.float64)
