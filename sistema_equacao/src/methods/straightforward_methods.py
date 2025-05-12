@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 
 
-def gaussian_elimination(augmented_matrix: NDArray) -> NDArray:
+def naive_gauss(augmented_matrix: NDArray) -> NDArray:
     n_rows: int = augmented_matrix.shape[0]
     n_cols: int = augmented_matrix.shape[1]
     solution_array: NDArray = np.zeros(n_cols - 1, dtype=np.float64)
@@ -41,7 +41,7 @@ def gaussian_elimination(augmented_matrix: NDArray) -> NDArray:
     return solution_array
 
 
-def gaussian_elimination_partial_pivoting(augmented_matrix: NDArray) -> NDArray:
+def gauss_partial_pivoting(augmented_matrix: NDArray) -> NDArray:
     n_rows: int = augmented_matrix.shape[0]
     n_cols: int = augmented_matrix.shape[1]
     solution_array: NDArray = np.zeros(n_cols - 1, dtype=np.float64)
@@ -94,7 +94,7 @@ def gaussian_elimination_partial_pivoting(augmented_matrix: NDArray) -> NDArray:
     return solution_array
 
 
-def gaussian_elimination_partial_pivoting_scaled(augmented_matrix: NDArray) -> NDArray:
+def gauss_scaled_pivoting(augmented_matrix: NDArray) -> NDArray:
     n_rows: int = augmented_matrix.shape[0]
     n_cols: int = augmented_matrix.shape[1]
     solution_array: NDArray = np.zeros(n_cols - 1, dtype=np.float64)
@@ -164,7 +164,7 @@ def gaussian_elimination_partial_pivoting_scaled(augmented_matrix: NDArray) -> N
     return solution_array
 
 
-def gaussian_elimination_full_pivoting(augmented_matrix: NDArray) -> NDArray:
+def gauss_complete_pivoting(augmented_matrix: NDArray) -> NDArray:
     n_rows: int = augmented_matrix.shape[0]
     n_cols: int = augmented_matrix.shape[1]
     solution_array: NDArray = np.zeros(n_cols - 1, dtype=np.float64)
