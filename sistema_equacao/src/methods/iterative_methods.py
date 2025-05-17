@@ -1,108 +1,173 @@
 from numpy.typing import NDArray
 import numpy as np
 
-def __calculate_error(xi:NDArray, x0:NDArray) -> np.float64:
-    error_array:NDArray = np.abs((xi - x0) / xi)
-    
+
+def __calculate_error(xi: NDArray, x0: NDArray) -> np.float64:
+    """
+    Calcula o erro relativo entre duas soluções.
+    :param xi: Solução atual
+    :param x0: Solução anterior
+    :return: Erro relativo máximo
+    """
+    error_array: NDArray = np.abs((xi - x0) / xi)
+
     return np.max(error_array)
 
-def jacobi(augmented_matrix:NDArray, tol:np.float64, max_iter:int) -> NDArray:
-    n_rows:int = augmented_matrix.shape[0]
-    n_cols:int = augmented_matrix.shape[1]
-    initial_guess:NDArray = np.zeros(n_rows, dtype=np.float64)
-    variable_values:NDArray = np.zeros(n_rows, dtype=np.float64)
-    iter:int = 0
-    
-    for i in range(n_rows):
-        if augmented_matrix[i, i] == 0:
-            raise ValueError("Elemento nulo encontrado  na diagonal.")
-        
-        initial_guess[i] = augmented_matrix[i, n_cols - 1] / augmented_matrix[i, i]
-        
-    while(iter < max_iter):
-        for i in range(n_rows):
-            summ:np.float64 = np.float64(0.0)
-            
-            for j in range(i):
-                summ += augmented_matrix[i, j] * initial_guess[j]
-                
-            for j in range(i + 1, n_cols - 1):
-                summ += augmented_matrix[i, j] * initial_guess[j]
-            
-            variable_values[i] = (augmented_matrix[i, n_cols - 1] - summ) / augmented_matrix[i, i]
 
-        if __calculate_error(variable_values, initial_guess) < tol:
-            return variable_values
-        
-        iter += 1
-        initial_guess = np.copy(variable_values)
-            
-    raise RuntimeError("O método de Jacobi não convergiu após ", max_iter, " iterações.")
+def calculate_initial_solution(augmented_matrix: NDArray) -> NDArray:
+    """
+    Calcula a solução inicial para o método iterativo.
+    :param augmented_matrix: Matriz aumentada do sistema
+    :return: Solução inicial
+    """
+    n: int = augmented_matrix.shape[0]
+    initial_guess: NDArray = np.zeros(n, dtype=np.float64)
 
-def gauss_seidel(augmented_matrix:NDArray, tol:np.float64, max_iter:int) -> NDArray:
-    n_rows:int = augmented_matrix.shape[0]
-    n_cols:int = augmented_matrix.shape[1]
-    variable_values:NDArray = np.zeros(n_rows, dtype=np.float64)
-    iter:int = 0
-    
-    for i in range(n_rows):
+    for i in range(n):
         if augmented_matrix[i, i] == 0:
             raise ValueError("Elemento nulo encontrado na diagonal.")
-        
-        variable_values[i] = augmented_matrix[i, n_cols - 1] / augmented_matrix[i, i]
-        
-    while(iter < max_iter):
-        initial_guess:NDArray = np.copy(variable_values)
 
-        for i in range(n_rows):
-            summ:np.float64 = np.float64(0.0)
-            
+        initial_guess[i] = augmented_matrix[i, -1] / augmented_matrix[i, i]
+
+    return initial_guess
+
+
+def jacobi(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> NDArray:
+    """
+    Método de Jacobi para resolver sistemas lineares.
+    """
+
+    def calculate_current_solution_jacobi(
+        augmented_matrix: NDArray, current_solution: NDArray
+    ) -> NDArray:
+        """
+        Método de Jacobi para calcular a próxima solução.
+        :param augmented_matrix: Matriz aumentada do sistema
+        :param current_solution: Solução atual
+        :return: Próxima solução
+        """
+        n: int = augmented_matrix.shape[0]
+        new_solution: NDArray = np.zeros(n, dtype=np.float64)
+
+        for i in range(n):
+            sum: np.float64 = np.float64(0.0)
+
             for j in range(i):
-                summ += augmented_matrix[i, j] * variable_values[j]
-                
-            for j in range(i + 1, n_cols - 1):
-                summ += augmented_matrix[i, j] * variable_values[j]
-            
-            variable_values[i] = (augmented_matrix[i, n_cols - 1] - summ) / augmented_matrix[i, i]
+                sum += augmented_matrix[i, j] * new_solution[j]
 
-        if __calculate_error(variable_values, initial_guess) < tol:
-            return variable_values
-        
-        iter += 1
-            
-    raise RuntimeError("O método de Gauss-Seidel não convergiu após ", max_iter, " iterações.")
+            for j in range(i + 1, n):
+                sum += augmented_matrix[i, j] * current_solution[j]
 
-def relaxing(augmented_matrix:NDArray, tol:np.float64, max_iter:int, relax_factor:np.float64 = np.float64(1.0)) -> NDArray:
-    n_rows:int = augmented_matrix.shape[0]
-    n_cols:int = augmented_matrix.shape[1]
-    variable_values:NDArray = np.zeros(n_rows, dtype=np.float64)
-    iter:int = 0
-    
-    for i in range(n_rows):
-        if augmented_matrix[i, i] == 0:
-            raise ValueError("Elemento nulo encontrado na diagonal.")
-        
-        variable_values[i] = augmented_matrix[i, n_cols - 1] / augmented_matrix[i, i]
-        
-    while iter < max_iter:
-        previous_values:NDArray = np.copy(variable_values)
+            new_solution[i] = (augmented_matrix[i, -1] - sum) / augmented_matrix[i, i]
 
-        for i in range(n_rows):
-            summ: np.float64 = np.float64(0.0)
-            gauss_seidel_result:np.float64 = np.float64(0.0)
-            
-            for j in range(i):
-                summ += augmented_matrix[i, j] * variable_values[j]
-                
-            for j in range(i + 1, n_cols - 1):
-                summ += augmented_matrix[i, j] * variable_values[j]
-                    
-            gauss_seidel_result = (augmented_matrix[i, n_cols - 1] - summ) / augmented_matrix[i, i]
-            variable_values[i] = (1 - relax_factor) * previous_values[i] + relax_factor * gauss_seidel_result
+        return new_solution
 
-        if __calculate_error(variable_values, previous_values) < tol:
-            return variable_values
+    return iterative_method(
+        augmented_matrix,
+        tol,
+        max_iter,
+        calculate_current_solution_jacobi,
+        "O método de Jacobi",
+    )
 
-        iter += 1
 
-    raise RuntimeError(f"O método do Relaxamento não convergiu após {max_iter} iterações.")
+def gauss_seidel(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> NDArray:
+    """
+    Método de Gauss-Seidel para resolver sistemas lineares.
+    """
+
+    def calculate_solution_gs(matrix, prev_solution):
+        # Implementação específica para Gauss-Seidel
+        # (adaptação da sua implementação atual)
+        n = matrix.shape[0]
+        solution = np.copy(prev_solution)
+
+        for i in range(n):
+            sum_value = 0.0
+            for j in range(n):
+                if j != i:
+                    sum_value += matrix[i, j] * solution[j]
+
+            solution[i] = (matrix[i, -1] - sum_value) / matrix[i, i]
+
+        return solution
+
+    return iterative_method(
+        augmented_matrix,
+        tol,
+        max_iter,
+        calculate_solution_gs,
+        "O método de Gauss-Seidel",
+    )
+
+
+def relaxing(
+    augmented_matrix: NDArray, tol: np.float64, max_iter: int, relax_factor: np.float64
+) -> NDArray:
+    """
+    Método de Relaxação para resolver sistemas lineares.
+    """
+
+    def calculate_solution_relax(matrix, prev_solution):
+        # Implementação específica para o método de relaxação
+        # (adaptação da sua implementação atual)
+        n = matrix.shape[0]
+        solution = np.copy(prev_solution)
+
+        for i in range(n):
+            sum_value = 0.0
+            for j in range(n):
+                if j != i:
+                    sum_value += matrix[i, j] * solution[j]
+
+            gs_value = (matrix[i, -1] - sum_value) / matrix[i, i]
+            solution[i] = prev_solution[i] + relax_factor * (
+                gs_value - prev_solution[i]
+            )
+
+        return solution
+
+    return iterative_method(
+        augmented_matrix,
+        tol,
+        max_iter,
+        calculate_solution_relax,
+        f"O método de Relaxação (ω={relax_factor})",
+    )
+
+
+def iterative_method(
+    augmented_matrix: NDArray,
+    tol: np.float64,
+    max_iter: int,
+    calculate_solution_func,
+    method_name: str = "O método iterativo",
+) -> NDArray:
+    """
+    Método iterativo genérico para resolver sistemas lineares.
+
+    :param augmented_matrix: Matriz aumentada do sistema
+    :param tol: Tolerância para convergência
+    :param max_iter: Número máximo de iterações
+    :param calculate_solution_func: Função que calcula a próxima solução
+    :param method_name: Nome do método para mensagens de erro
+    :return: Solução do sistema
+    """
+    n: int = augmented_matrix.shape[0]
+    iter_count: int = 0
+    previous_solution: NDArray = calculate_initial_solution(augmented_matrix)
+    current_solution: NDArray = np.zeros(n, dtype=np.float64)
+
+    while iter_count < max_iter:
+        current_solution = calculate_solution_func(augmented_matrix, previous_solution)
+
+        if np.any(np.isnan(current_solution)):
+            raise ValueError("Solução inválida encontrada.")
+
+        if __calculate_error(current_solution, previous_solution) < tol:
+            return current_solution
+
+        iter_count += 1
+        previous_solution = np.copy(current_solution)
+
+    raise RuntimeError(f"{method_name} não convergiu após {max_iter} iterações.")
