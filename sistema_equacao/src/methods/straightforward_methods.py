@@ -3,93 +3,6 @@ from typing import Tuple
 import numpy as np
 
 
-def elimination(augmented_matrix: NDArray) -> None:
-    """
-    Método de eliminação de Gauss.
-        :param augmented_matrix: Matriz aumentada do sistema
-        :return: None
-    """
-    n: int = augmented_matrix.shape[0]
-
-    for i in range(n):
-        if augmented_matrix[i, i] == 0:
-            raise ZeroDivisionError("Método falhou! Matriz singular.")
-
-        for j in range(i + 1, n):
-            factor: np.float64 = augmented_matrix[j, i] / augmented_matrix[i, i]
-
-            for k in range(i, n + 1):
-                augmented_matrix[j, k] = (
-                    augmented_matrix[j, k] - factor * augmented_matrix[i, k]
-                )
-
-
-def back_substitution(augmented_matrix: NDArray) -> NDArray:
-    """
-    Método de substituição para resolver um sistema de equações lineares
-        :param augmented_matrix: Matriz aumentada do sistema
-        :return: Vetor solução
-    """
-    n: int = augmented_matrix.shape[0]
-    solution_array: NDArray = np.zeros(n, dtype=np.float64)
-
-    solution_array[n - 1] = augmented_matrix[n - 1, n] / augmented_matrix[n - 1, n - 1]
-
-    for i in range(n - 2, -1, -1):
-        sum: np.float64 = np.float64(0.0)
-
-        for j in range(i + 1, n):
-            sum += augmented_matrix[i, j] * solution_array[j]
-
-        solution_array[i] = (augmented_matrix[i, n] - sum) / augmented_matrix[i, i]
-    return solution_array
-
-
-def naive_gauss(augmented_matrix: NDArray) -> NDArray:
-    """
-    Método de eliminação de Gauss sem pivoteamento.
-        :param augmented_matrix: Matriz aumentada do sistema
-        :return: Vetor solução
-    """
-    n: int = augmented_matrix.shape[0]
-
-    elimination(augmented_matrix)
-
-    if augmented_matrix[n - 1, n] == 0:
-        raise ArithmeticError("Não existe solução única!")
-
-    return back_substitution(augmented_matrix)
-
-
-def elimination_with_pivoting(
-    augmented_matrix: NDArray,
-    idx_array: list[int],
-    pivot_selector,
-) -> None:
-    """
-    Eliminação de Gauss genérica com pivoteamento customizável.
-    :param augmented_matrix: Matriz aumentada do sistema
-    :param idx_array: Vetor de índices das linhas
-    :param pivot_selector: Função que recebe (augmented_matrix, idx_array, i, scale_array) e retorna o índice do pivô
-    """
-    n: int = augmented_matrix.shape[0]
-
-    for i in range(n):
-        p = pivot_selector(augmented_matrix, idx_array, i)
-        if augmented_matrix[idx_array[p], i] == 0:
-            raise ArithmeticError("Não existe solução única!")
-
-        if idx_array[i] != idx_array[p]:
-            idx_array[i], idx_array[p] = idx_array[p], idx_array[i]
-
-        for j in range(i + 1, n):
-            factor: np.float64 = (
-                augmented_matrix[idx_array[j], i] / augmented_matrix[idx_array[i], i]
-            )
-            for k in range(i, n + 1):
-                augmented_matrix[idx_array[j], k] -= factor * augmented_matrix[idx_array[i], k]
-
-
 def partial_pivot_selector(augmented_matrix, idx_array, i):
     """
     Função de seleção de pivô para o método de eliminação de Gauss com pivoteamento parcial.
@@ -125,6 +38,56 @@ def scaled_partial_pivot_selector(augmented_matrix, idx_array, i, scale_array):
             max_ratio = ratio
             p = k
     return p
+
+
+def elimination(augmented_matrix: NDArray) -> None:
+    """
+    Método de eliminação de Gauss.
+        :param augmented_matrix: Matriz aumentada do sistema
+        :return: None
+    """
+    n: int = augmented_matrix.shape[0]
+
+    for i in range(n):
+        if augmented_matrix[i, i] == 0:
+            raise ZeroDivisionError("Método falhou! Matriz singular.")
+
+        for j in range(i + 1, n):
+            factor: np.float64 = augmented_matrix[j, i] / augmented_matrix[i, i]
+
+            for k in range(i, n + 1):
+                augmented_matrix[j, k] = (
+                    augmented_matrix[j, k] - factor * augmented_matrix[i, k]
+                )
+
+
+def elimination_with_pivoting(
+    augmented_matrix: NDArray,
+    idx_array: list[int],
+    pivot_selector,
+) -> None:
+    """
+    Eliminação de Gauss genérica com pivoteamento customizável.
+    :param augmented_matrix: Matriz aumentada do sistema
+    :param idx_array: Vetor de índices das linhas
+    :param pivot_selector: Função que recebe (augmented_matrix, idx_array, i, scale_array) e retorna o índice do pivô
+    """
+    n: int = augmented_matrix.shape[0]
+
+    for i in range(n):
+        p = pivot_selector(augmented_matrix, idx_array, i)
+        if augmented_matrix[idx_array[p], i] == 0:
+            raise ArithmeticError("Não existe solução única!")
+
+        if idx_array[i] != idx_array[p]:
+            idx_array[i], idx_array[p] = idx_array[p], idx_array[i]
+
+        for j in range(i + 1, n):
+            factor: np.float64 = (
+                augmented_matrix[idx_array[j], i] / augmented_matrix[idx_array[i], i]
+            )
+            for k in range(i, n + 1):
+                augmented_matrix[idx_array[j], k] -= factor * augmented_matrix[idx_array[i], k]
 
 
 def elimination_partial_pivoting(augmented_matrix: NDArray, idx_array: list[int]) -> None:
@@ -187,6 +150,47 @@ def elimination_complete_pivoting(augmented_matrix: NDArray, row_idx: list[int],
                 augmented_matrix[row_idx[j], col_idx[k]] -= factor * augmented_matrix[row_idx[i], col_idx[k]]
 
 
+def back_substitution(augmented_matrix: NDArray) -> NDArray:
+    """
+    Método de substituição para resolver um sistema de equações lineares
+        :param augmented_matrix: Matriz aumentada do sistema
+        :return: Vetor solução
+    """
+    n: int = augmented_matrix.shape[0]
+    solution_array: NDArray = np.zeros(n, dtype=np.float64)
+
+    solution_array[n - 1] = augmented_matrix[n - 1, n] / augmented_matrix[n - 1, n - 1]
+
+    for i in range(n - 2, -1, -1):
+        sum: np.float64 = np.float64(0.0)
+
+        for j in range(i + 1, n):
+            sum += augmented_matrix[i, j] * solution_array[j]
+
+        solution_array[i] = (augmented_matrix[i, n] - sum) / augmented_matrix[i, i]
+    return solution_array
+
+
+def forward_substitution(augmented_matrix: NDArray) -> NDArray:
+    """
+    Método de substituição para resolver um sistema de equações lineares
+        :param augmented_matrix: Matriz aumentada do sistema
+        :return: Vetor solução
+    """
+    n: int = augmented_matrix.shape[0]
+    solution_array: NDArray = np.zeros(n, dtype=np.float64)
+
+    for i in range(n):
+        sum: np.float64 = np.float64(0.0)
+
+        for j in range(i):
+            sum += augmented_matrix[i, j] * solution_array[j]
+
+        solution_array[i] = (augmented_matrix[i, n] - sum) / augmented_matrix[i, i]
+
+    return solution_array
+
+
 def back_substitution_partial_pivoting(augmented_matrix: NDArray, idx_array: list[int]) -> NDArray:
     """
     Método de substituição para resolver um sistema de equações lineares
@@ -241,6 +245,22 @@ def back_substitution_complete_pivoting(augmented_matrix: NDArray, row_idx: list
     return x
 
 
+def naive_gauss(augmented_matrix: NDArray) -> NDArray:
+    """
+    Método de eliminação de Gauss sem pivoteamento.
+        :param augmented_matrix: Matriz aumentada do sistema
+        :return: Vetor solução
+    """
+    n: int = augmented_matrix.shape[0]
+
+    elimination(augmented_matrix)
+
+    if augmented_matrix[n - 1, n] == 0:
+        raise ArithmeticError("Não existe solução única!")
+
+    return back_substitution(augmented_matrix)
+
+
 def gauss_partial_pivoting(augmented_matrix: NDArray) -> NDArray:
     """
     Método de eliminação de Gauss com pivoteamento parcial.
@@ -293,24 +313,45 @@ def gauss_complete_pivoting(augmented_matrix: NDArray) -> NDArray:
     return back_substitution_complete_pivoting(augmented_matrix, row_idx, col_idx)
 
 
-def LU_factoring(square_matrix: NDArray) -> Tuple[NDArray, NDArray]:
-    length: int = square_matrix.shape[0]
-    L: NDArray = np.zeros((length, length), dtype=np.float64)
-    U: NDArray = np.zeros((length, length), dtype=np.float64)
+def LU_factoring(a: NDArray) -> Tuple[NDArray, NDArray]:
+    """
+    Fatoração LU de uma matriz quadrada.
+        :param a: Matriz quadrada
+        :return: Tupla (L, U) onde L é a matriz triangular inferior e U é a matriz triangular superior
+    """
 
-    for i in range(length):
-        for j in range(i, length):
-            summ: np.float64 = np.sum(L[i, :i] * U[:i, j])
-            U[i, j] = square_matrix[i, j] - summ
+    n: int = a.shape[0]
+    L: NDArray = np.zeros((n, n), dtype=np.float64)
+    U: NDArray = np.zeros((n, n), dtype=np.float64)
 
-        for j in range(i, length):
+    for i in range(n):
+        for j in range(i, n):
+            sum: np.float64 = np.sum(L[i, :i] * U[:i, j])
+            U[i, j] = a[i, j] - sum
+
+        for j in range(i, n):
             if U[i, i] == 0:
                 raise ArithmeticError(
-                    "Fatoração LU não é possível!\nMatriz é singular."
+                    "Fatoração LU não é possível!."
                 )
 
-            summ: np.float64 = np.sum(L[j, :i] * U[:i, i])
-            L[j, i] = (square_matrix[j, i] - summ) / U[i, i]
+            sum: np.float64 = np.sum(L[j, :i] * U[:i, i])
+            L[j, i] = (a[j, i] - sum) / U[i, i]
 
     return (L, U)
 
+
+def LU_solve(a: NDArray) -> NDArray:
+    """
+    Resolução de um sistema de equações lineares usando fatoração LU.
+        :param a: Matriz aumentada do sistema
+        :return: Vetor solução
+    """
+    L, U = LU_factoring(a[:, :-1])
+
+    L_augmented: NDArray = np.hstack((L, a[:, -1].reshape(-1, 1)))
+    y: NDArray = forward_substitution(L_augmented)
+
+    U_augmented: NDArray = np.hstack((U, y.reshape(-1, 1)))
+    x: NDArray = back_substitution(U_augmented)
+    return x
