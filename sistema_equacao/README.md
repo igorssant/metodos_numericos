@@ -31,7 +31,6 @@ Matriz com diagonal dominante:
 
 ## 4. Métricas de Avaliação
 
-
 a) Calculo do erro verdadeiro para verificar a precisão do sistema de equações lineares.
 
 b) Convergência (para métodos iterativos):
