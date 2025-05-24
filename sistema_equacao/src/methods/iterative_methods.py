@@ -1,5 +1,5 @@
-from numpy.typing import NDArray
-import numpy as np
+from numpy.typing import NDArray # type: ignore
+import numpy as np # type: ignore
 
 
 def __calculate_error(xi: NDArray, x0: NDArray) -> np.float64:
