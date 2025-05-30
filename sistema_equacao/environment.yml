@@ -1,4 +1,4 @@
-name: .mn-venv
+name: mn
 channels:
   - conda-forge
 dependencies:

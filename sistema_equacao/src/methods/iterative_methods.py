@@ -157,6 +157,7 @@ def iterative_method(
     iter_count: int = 0
     previous_solution: NDArray = calculate_initial_solution(augmented_matrix)
     current_solution: NDArray = np.zeros(n, dtype=np.float64)
+    errors = []
 
     while iter_count < max_iter:
         current_solution = calculate_solution_func(augmented_matrix, previous_solution)
@@ -164,8 +165,11 @@ def iterative_method(
         if np.any(np.isnan(current_solution)):
             raise ValueError("Solução inválida encontrada.")
 
-        if __calculate_error(current_solution, previous_solution) < tol:
-            return current_solution
+        error = __calculate_error(current_solution, previous_solution)
+        errors.append(error)
+
+        if error < tol:
+            return current_solution, errors
 
         iter_count += 1
         previous_solution = np.copy(current_solution)
