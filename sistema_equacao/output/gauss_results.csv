@@ -1,0 +1,25 @@
+n,method,time,abs_error,rel_error
+5.0,gauss_naive,4.7529000e-05 s,2.5912605e-12,2.5912605e-12
+5.0,gauss_partial,4.7456999e-05 s,2.5912605e-12,2.5912605e-12
+5.0,gauss_scaled,1.7618070e-03 s,2.5912605e-12,2.5912605e-12
+5.0,gauss_complete,5.9633001e-05 s,2.5910385e-12,2.5910385e-12
+5.0,jacobi,nan s,nan,nan
+5.0,gauss_seidel,1.0517745e+01 s,1.0000000e+00,1.0000000e+00
+5.0,relaxing_0.8,1.5376309e+01 s,1.0000000e+00,1.0000000e+00
+5.0,relaxing_1.12,8.0234071e+00 s,1.0000000e+00,1.0000000e+00
+9.0,gauss_naive,1.3638100e-04 s,1.6869114e-05,1.6869114e-05
+9.0,gauss_partial,1.5149600e-04 s,1.6869083e-05,1.6869083e-05
+9.0,gauss_scaled,2.0514900e-04 s,1.6869083e-05,1.6869083e-05
+9.0,gauss_complete,1.9811600e-04 s,1.6869083e-05,1.6869083e-05
+9.0,jacobi,nan s,nan,nan
+9.0,gauss_seidel,nan s,nan,nan
+9.0,relaxing_0.8,nan s,nan,nan
+9.0,relaxing_1.12,nan s,nan,nan
+15.0,gauss_naive,2.0137550e-03 s,8.3550476e+00,8.3550476e+00
+15.0,gauss_partial,8.3407200e-04 s,8.3127083e+00,8.3127083e+00
+15.0,gauss_scaled,7.2047600e-04 s,8.3127083e+00,8.3127083e+00
+15.0,gauss_complete,7.8787900e-04 s,8.3127083e+00,8.3127083e+00
+15.0,jacobi,nan s,nan,nan
+15.0,gauss_seidel,nan s,nan,nan
+15.0,relaxing_0.8,nan s,nan,nan
+15.0,relaxing_1.12,nan s,nan,nan
