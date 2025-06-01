@@ -1,42 +1,72 @@
-# Metodologia de Resolução de Sistemas Lineares
+# Sistemas de Equações Lineares — Métodos Numéricos
 
-## 1. Descrição do Problema
-Um sistema de equações lineares é um conjunto de equações que envolvem variáveis lineares. O objetivo é encontrar os valores das variáveis que satisfazem todas as equações simultaneamente. Esses sistemas podem ser representados na forma matricial Ax = b, onde A é a matriz dos coeficientes, x é o vetor das variáveis e b é o vetor dos termos independentes.
+Este projeto explora a resolução de sistemas de equações lineares utilizando métodos numéricos diretos e iterativos, com foco em análise de condicionamento, precisão, convergência e desempenho computacional.
 
-## 2. Verificação da condição do sistema
+## Estrutura do Projeto
 
-Sistemas mal condicionados são extremamente sensíveis a pequenas variações nos dados de entrada. Isso significa que uma pequena mudança nos dados pode levar a grandes mudanças na solução do sistema. Isso pode ocorrer em sistemas lineares e não lineares, e é uma característica importante a ser considerada ao resolver problemas numéricos.
+- `src/`: Notebooks e scripts principais para experimentos e análise.
+- `output/`: Resultados gerados (csv, gráficos).
+- `dev_files/`: Materiais de apoio e referências.
+- `environment.yml`: Ambiente Conda para reprodução dos experimentos.
 
-Uma interpretação alternativa do mal condicionamento é que uma gama ampla de respostas pode satisfazer aproximadamente as
-equações.
+## Principais Funcionalidades
 
-O condicionamento de um sistema linear pode ser verificado através de três métodos principais:
+- **Geração de matrizes de Hilbert** para análise de condicionamento.
+- **Resolução de sistemas** por métodos diretos:
+  - Eliminação de Gauss (simples, pivotamento parcial, escalonado, completo)
+  - Fatoração LU
+- **Resolução por métodos iterativos**:
+  - Jacobi
+  - Gauss-Seidel
+  - Relaxamento (SOR)
+- **Cálculo de determinante, número de condição e inversa** das matrizes.
+- **Avaliação de precisão** (erro absoluto e relativo), convergência e tempo de execução.
+- **Exportação de resultados** para arquivos CSV e geração de gráficos.
 
-- a) Pequenas mudanças nos coeficientes da matriz A e no vetor b, e observar a mudança na solução x.
+## Como Executar
 
-    Para verificar a condição de um sistema linear, podemos fazer pequenas perturbações nos coeficientes da matriz A e no vetor b, e observar como isso afeta a solução x. Se pequenas mudanças em A ou b resultarem em grandes mudanças em x, o sistema é considerado mal condicionado.
+1. **Crie o ambiente Conda:**
 
-- b) Determinante da matriz A
+   ```sh
+   conda env create -f environment.yml
+   conda activate mn
+   ```
 
-    O determinante de uma matriz é uma medida de quão bem condicionada ela é. Se o determinante for próximo de zero, a matriz é considerada mal condicionada. Isso significa que pequenas mudanças nos dados de entrada podem levar a grandes mudanças na solução do sistema.
+2. **Abra os notebooks em `src/` no VS Code ou Jupyter.**
+   - Execute as células para reproduzir os experimentos e gerar os resultados.
 
-- c) Número de condição da matriz A
+## Dependências
 
-    O número de condição de uma matriz é uma medida de quão sensível a solução do sistema é a pequenas mudanças nos dados de entrada. Um número de condição alto indica que o sistema é mal condicionado, enquanto um número de condição baixo indica que o sistema é bem condicionado. O número de condição pode ser calculado usando a norma da matriz e sua inversa.
+Veja [environment.yml](environment.yml) para detalhes. Principais pacotes:
 
-## 3. Verifica critérios de convergência
+- Python 3.13
+- numpy, pandas, sympy
+- matplotlib, seaborn
+- ipykernel, nbformat
 
-Matriz com diagonal dominante:
-- Uma matriz é dita diagonalmente dominante se, para cada linha, o valor absoluto do elemento da diagonal é maior ou igual à soma dos valores absolutos dos outros elementos da linha. Isso garante que o método de Gauss-Seidel converja.
+## Resultados
 
-## 4. Métricas de Avaliação
+Os resultados dos experimentos (soluções, erros, gráficos de convergência) são salvos em [output/](output/).
 
-a) Calculo do erro verdadeiro para verificar a precisão do sistema de equações lineares.
+## Organização dos Arquivos
 
-b) Convergência (para métodos iterativos):
- - Número de iterações até convergir
- - Evolução do erro por iteração (pode ser plotado)
+- `src/main.ipynb`: Notebook principal com todos os experimentos e análises.
+- `src/methods/`: Implementações dos métodos diretos e iterativos.
+- `src/utils/`: Funções auxiliares, como geração de matrizes.
+- `output/`: Resultados em CSV e imagens dos gráficos.
+- `dev_files/`: Materiais de apoio, referências e anotações.
 
-c) Desempenho computacional:
- - Tempo de execução de cada método
- - Número de operações aproximadas (em teoria ou medindo com time)
+## Exemplos de Saída
+
+- Tabelas de erros absolutos e relativos para cada método e tamanho de matriz.
+- Gráficos de convergência dos métodos iterativos.
+- Arquivos CSV com os resultados das execuções.
+
+## Referências
+
+- Métodos Numéricos para Engenharia — CAP 257
+- Algebra Linear e suas Aplicações — Petronio Pulino
+
+---
+
+> Projeto acadêmico para estudo de métodos numéricos aplicados à resolução de sistemas lineares.
