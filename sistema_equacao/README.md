@@ -9,6 +9,52 @@ Este projeto explora a resolução de sistemas de equações lineares utilizando
 - `dev_files/`: Materiais de apoio e referências.
 - `environment.yml`: Ambiente Conda para reprodução dos experimentos.
 
+## Descrição dos Arquivos do Projeto
+
+A seguir está uma explicação detalhada dos principais arquivos e pastas do projeto:
+
+### src/
+
+- **main.ipynb**
+  Notebook principal do projeto. Contém toda a lógica de experimentação, análise, execução dos métodos numéricos, geração de gráficos e exportação dos resultados. É o ponto de partida para reproduzir todos os experimentos do trabalho.
+
+- **methods/**
+  Pasta que contém os módulos Python com as implementações dos métodos numéricos:
+  - **direct_methods.py**: Implementa os métodos diretos para resolução de sistemas lineares, como eliminação de Gauss (simples, com pivotamento parcial, escalonado e completo) e fatoração LU.
+  - **iterative_methods.py**: Implementa os métodos iterativos, incluindo Jacobi, Gauss-Seidel e métodos de relaxamento (SOR).
+
+- **utils/**
+  Pasta com funções auxiliares:
+  - **matrix.py**: Funções para geração de matrizes especiais (como a matriz de Hilbert) e outras utilidades para manipulação de matrizes.
+
+### output/
+
+- **gauss_testes.csv**
+  Tabela com os resultados dos métodos diretos: tempo de execução, erro absoluto e relativo para cada método e tamanho de matriz.
+
+- **gauss_solucao.csv**
+  Soluções dos sistemas lineares obtidas pelos métodos diretos, para cada valor de n.
+
+- **iterativos_testes.csv**
+  Tabela com os resultados dos métodos iterativos: tempo de execução, erro absoluto e relativo para cada método e tamanho de matriz.
+
+- **iterativos_solucao.csv**
+  Soluções dos sistemas lineares obtidas pelos métodos iterativos, para cada valor de n.
+
+- **convergencia_hilbert_n{n}_tol{tol}.png**
+  Gráficos de convergência dos métodos iterativos para cada valor de n e tolerância utilizada.
+
+- **media_iterativos.csv**
+  Tabela com a média dos tempos de execução e erros relativos dos métodos iterativos, removendo o maior e menor valor de cada conjunto de execuções.
+
+### dev_files/
+
+- Materiais de apoio, anotações, PDFs de referência e outros arquivos utilizados durante o desenvolvimento do projeto.
+
+### environment.yml
+
+Arquivo de configuração do ambiente Conda, listando todas as dependências necessárias para executar o projeto.
+
 ## Principais Funcionalidades
 
 - **Geração de matrizes de Hilbert** para análise de condicionamento.
@@ -47,14 +93,6 @@ Veja [environment.yml](environment.yml) para detalhes. Principais pacotes:
 ## Resultados
 
 Os resultados dos experimentos (soluções, erros, gráficos de convergência) são salvos em [output/](output/).
-
-## Organização dos Arquivos
-
-- `src/main.ipynb`: Notebook principal com todos os experimentos e análises.
-- `src/methods/`: Implementações dos métodos diretos e iterativos.
-- `src/utils/`: Funções auxiliares, como geração de matrizes.
-- `output/`: Resultados em CSV e imagens dos gráficos.
-- `dev_files/`: Materiais de apoio, referências e anotações.
 
 ## Exemplos de Saída
 
