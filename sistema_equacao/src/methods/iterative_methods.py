@@ -9,7 +9,8 @@ def __calculate_error(xi: NDArray, x0: NDArray) -> np.float64:
     :param x0: Solução anterior
     :return: Erro relativo máximo
     """
-    error_array: NDArray = np.abs((xi - x0) / xi)
+    #error_array: NDArray = np.abs((xi - x0) / xi)
+    error_array: NDArray = np.abs((xi - x0))
 
     return np.max(error_array)
 
@@ -32,7 +33,7 @@ def calculate_initial_solution(augmented_matrix: NDArray) -> NDArray:
     return initial_guess
 
 
-def jacobi(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> NDArray:
+def jacobi(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> tuple[NDArray, list[float]]:
     """
     Método de Jacobi para resolver sistemas lineares.
     """
@@ -71,7 +72,7 @@ def jacobi(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> NDArray
     )
 
 
-def gauss_seidel(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> NDArray:
+def gauss_seidel(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> tuple[NDArray, list[float]]:
     """
     Método de Gauss-Seidel para resolver sistemas lineares.
     """
@@ -103,7 +104,7 @@ def gauss_seidel(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> N
 
 def relaxing(
     augmented_matrix: NDArray, tol: np.float64, max_iter: int, relax_factor: np.float64
-) -> NDArray:
+) -> tuple[NDArray, list[float]]:
     """
     Método de Relaxação para resolver sistemas lineares.
     """
@@ -142,7 +143,7 @@ def iterative_method(
     max_iter: int,
     calculate_solution_func,
     method_name: str = "O método iterativo",
-) -> NDArray:
+) -> tuple[NDArray, list[float]]:
     """
     Método iterativo genérico para resolver sistemas lineares.
 
