@@ -6,7 +6,7 @@ def create_augmented_matrix(x:NDArray, y:NDArray, poly_order:int) -> NDArray:
     
     if data_size < poly_order + 1:
         raise ArithmeticError(f"""
-                               Erro: O número de pontos de dados deve ser maior ou igual a ordem do polinômio + 1.
+                               Erro: O número de pontos deve ser maior ou igual a ordem do polinômio + 1.
                                Quantidade de dados = {data_size}.
                                Ordem + 1 = {poly_order + 1}.
                                Regressão impossível.
@@ -37,5 +37,5 @@ def create_augmented_matrix(x:NDArray, y:NDArray, poly_order:int) -> NDArray:
         
     return augmented_matrix
 
-def retrieve_coef(A: NDArray, b:NDArray) -> NDArray:
+def retrieve_poly_coef(A: NDArray, b:NDArray) -> NDArray:
     return np.linalg.solve(A, b)
