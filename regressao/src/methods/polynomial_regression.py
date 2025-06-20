@@ -1,9 +1,8 @@
 from numpy.typing import NDArray
 import numpy as np
 
-def create_augmented_matrix_optimized(x: NDArray, y: NDArray, poly_order: int) -> NDArray:
+def create_augmented_matrix(x: NDArray, y: NDArray, poly_order: int) -> NDArray:
     data_size = len(x)
-    
     if data_size < poly_order + 1:
         raise ArithmeticError("Erro: O número de pontos deve ser maior ou igual a ordem do polinômio + 1.")
 

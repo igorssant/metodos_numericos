@@ -8,11 +8,11 @@ def determinate_elements(X:NDArray, b:NDArray) -> NDArray:
 
     if data_size < poly_order + 1:
         raise ArithmeticError(f"""
-                               Erro: O número de pontos deve ser maior ou igual a ordem do polinômio + 1.
-                               Quantidade de dados = {data_size}.
-                               Ordem + 1 = {poly_order + 1}.
-                               Regressão impossível.
-                               """)
+Erro: O número de pontos deve ser maior ou igual a ordem do polinômio + 1.
+Quantidade de dados = {data_size}.
+Ordem + 1 = {poly_order + 1}.
+Regressão impossível.
+""")
 
     aux_matrix :NDArray = np.hstack((np.ones((data_size, 1)), X))
     augmented_matrix :NDArray = np.zeros((poly_order + 1,
