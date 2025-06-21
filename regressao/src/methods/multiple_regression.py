@@ -1,7 +1,7 @@
 from numpy.typing import NDArray
 import numpy as np
 
-def determinate_elements(X:NDArray, b:NDArray) -> NDArray:
+def determinate_elements(X :NDArray, b :NDArray) -> NDArray:
     data_size :int = b.shape[0]
     num_variables :int = X.shape[1] if X.ndim > 1 else 1
     poly_order :int = num_variables
@@ -31,5 +31,5 @@ def determinate_elements(X:NDArray, b:NDArray) -> NDArray:
         
     return augmented_matrix
 
-def retrieve_multiple_coef(A:NDArray, b:NDArray) -> NDArray:
+def retrieve_multiple_coef(A :NDArray, b :NDArray) -> NDArray:
     return np.linalg.solve(A, b)
