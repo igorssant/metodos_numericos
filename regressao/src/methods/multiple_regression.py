@@ -2,18 +2,9 @@ from numpy.typing import NDArray
 import numpy as np
 
 def determinate_elements(X:NDArray, b:NDArray) -> NDArray:
-    data_size :int = len(b)
+    data_size :int = b.shape[0]
     num_variables :int = X.shape[1] if X.ndim > 1 else 1
     poly_order :int = num_variables
-
-    if data_size < poly_order + 1:
-        raise ArithmeticError(f"""
-Erro: O número de pontos deve ser maior ou igual a ordem do polinômio + 1.
-Quantidade de dados = {data_size}.
-Ordem + 1 = {poly_order + 1}.
-Regressão impossível.
-""")
-
     aux_matrix :NDArray = np.hstack((np.ones((data_size, 1)), X))
     augmented_matrix :NDArray = np.zeros((poly_order + 1,
                                           poly_order + 2),
