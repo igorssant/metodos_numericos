@@ -15,6 +15,22 @@ def __calculate_error(xi: NDArray, x0: NDArray) -> np.float64:
     return np.max(error_array)
 
 
+def get_augmented_matrix(
+    A: NDArray, B: NDArray
+) -> NDArray:
+    """
+    Generate an augmented matrix from matrix A and vector B.
+
+    Parameters:
+    A (NDArray): The coefficient matrix.
+    B (NDArray): The constant terms vector.
+
+    Returns:
+    NDArray: The augmented matrix.
+    """
+    return np.hstack((A, B.reshape(-1, 1)))
+
+
 def calculate_initial_solution(augmented_matrix: NDArray) -> NDArray:
     """
     Calcula a solução inicial para o método iterativo.
@@ -33,46 +49,7 @@ def calculate_initial_solution(augmented_matrix: NDArray) -> NDArray:
     return initial_guess
 
 
-def jacobi(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> tuple[NDArray, list[float]]:
-    """
-    Método de Jacobi para resolver sistemas lineares.
-    """
-
-    def calculate_current_solution_jacobi(
-        augmented_matrix: NDArray, current_solution: NDArray
-    ) -> NDArray:
-        """
-        Método de Jacobi para calcular a próxima solução.
-        :param augmented_matrix: Matriz aumentada do sistema
-        :param current_solution: Solução atual
-        :return: Próxima solução
-        """
-        n: int = augmented_matrix.shape[0]
-        new_solution: NDArray = np.zeros(n, dtype=np.float64)
-
-        for i in range(n):
-            sum: np.float64 = np.float64(0.0)
-
-            for j in range(i):
-                sum += augmented_matrix[i, j] * new_solution[j]
-
-            for j in range(i + 1, n):
-                sum += augmented_matrix[i, j] * current_solution[j]
-
-            new_solution[i] = (augmented_matrix[i, -1] - sum) / augmented_matrix[i, i]
-
-        return new_solution
-
-    return iterative_method(
-        augmented_matrix,
-        tol,
-        max_iter,
-        calculate_current_solution_jacobi,
-        "O método de Jacobi",
-    )
-
-
-def gauss_seidel(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> tuple[NDArray, list[float]]:
+def gauss_seidel(augmented_matrix: NDArray, tol: np.float64 | float, max_iter: int) -> NDArray[np.float64]:
     """
     Método de Gauss-Seidel para resolver sistemas lineares.
     """
@@ -101,49 +78,13 @@ def gauss_seidel(augmented_matrix: NDArray, tol: np.float64, max_iter: int) -> t
         "O método de Gauss-Seidel",
     )
 
-
-def relaxing(
-    augmented_matrix: NDArray, tol: np.float64, max_iter: int, relax_factor: np.float64
-) -> tuple[NDArray, list[float]]:
-    """
-    Método de Relaxação para resolver sistemas lineares.
-    """
-
-    def calculate_solution_relax(matrix, prev_solution):
-        # Implementação específica para o método de relaxação
-        # (adaptação da sua implementação atual)
-        n = matrix.shape[0]
-        solution = np.copy(prev_solution)
-
-        for i in range(n):
-            sum_value = 0.0
-            for j in range(n):
-                if j != i:
-                    sum_value += matrix[i, j] * solution[j]
-
-            gs_value = (matrix[i, -1] - sum_value) / matrix[i, i]
-            solution[i] = prev_solution[i] + relax_factor * (
-                gs_value - prev_solution[i]
-            )
-
-        return solution
-
-    return iterative_method(
-        augmented_matrix,
-        tol,
-        max_iter,
-        calculate_solution_relax,
-        f"O método de Relaxação (ω={relax_factor})",
-    )
-
-
 def iterative_method(
     augmented_matrix: NDArray,
-    tol: np.float64,
+    tol: np.float64 | float,
     max_iter: int,
     calculate_solution_func,
     method_name: str = "O método iterativo",
-) -> tuple[NDArray, list[float]]:
+) -> NDArray[np.float64]:
     """
     Método iterativo genérico para resolver sistemas lineares.
 
@@ -158,7 +99,6 @@ def iterative_method(
     iter_count: int = 0
     previous_solution: NDArray = calculate_initial_solution(augmented_matrix)
     current_solution: NDArray = np.zeros(n, dtype=np.float64)
-    errors = []
 
     while iter_count < max_iter:
         current_solution = calculate_solution_func(augmented_matrix, previous_solution)
@@ -167,10 +107,9 @@ def iterative_method(
             raise ValueError("Solução inválida encontrada.")
 
         error = __calculate_error(current_solution, previous_solution)
-        errors.append(error)
 
         if error < tol:
-            return current_solution, errors
+            return current_solution
 
         iter_count += 1
         previous_solution = np.copy(current_solution)
