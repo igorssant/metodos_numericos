@@ -1,6 +1,6 @@
 import sys
 import os
-
+from typing import Tuple
 from numpy.typing import NDArray
 import numpy as np
 
@@ -13,7 +13,8 @@ from utils.gauss_seidel import (
 )
 
 def natural_splines(X: NDArray[np.float64],
-                    Y: NDArray[np.float64],):
+                    Y: NDArray[np.float64]) -> Tuple[np.float64, np.float64,
+                                                     np.float64, np.float64]:
 
     # Número de splines
     n = X.shape[0] - 1
@@ -47,7 +48,6 @@ def natural_splines(X: NDArray[np.float64],
     # Resolver o sistema para encontrar os coeficientes c
     c = gauss_seidel(augmented_matrix, 1e-6, 200)
 
-
     # Calcular os coeficientes b
     for i in range(n):
         b[i] = (1 / h[i]) * (Y[i + 1] - Y[i]) - (h[i] / 3) * (2 * c[i] + c[i + 1])
@@ -56,9 +56,10 @@ def natural_splines(X: NDArray[np.float64],
     for i in range(n):
         d[i] = (c[i + 1] - c[i]) / (3 * h[i])
 
-    c = c[:-1]  # Remover o último elemento, pois não é necessário
+    # Remover o último elemento, pois não é necessário
+    c = c[:-1]
 
-    return a, b, c, d
+    return (a, b, c, d)
 
 
 if __name__  == "__main__":
