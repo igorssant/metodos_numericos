@@ -13,8 +13,8 @@ from utils.gauss_seidel import (
 )
 
 def natural_splines(X: NDArray[np.float64],
-                    Y: NDArray[np.float64]) -> Tuple[np.float64, np.float64,
-                                                     np.float64, np.float64]:
+                    Y: NDArray[np.float64]) -> Tuple[NDArray, NDArray,
+                                                     NDArray, NDArray]:
 
     # Número de splines
     n = X.shape[0] - 1
@@ -59,7 +59,7 @@ def natural_splines(X: NDArray[np.float64],
     # Remover o último elemento, pois não é necessário
     c = c[:-1]
 
-    return (a, b, c, d)
+    return a, b, c, d
 
 
 if __name__  == "__main__":
