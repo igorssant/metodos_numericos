@@ -19,10 +19,10 @@ def natural_splines(X: NDArray[np.float64],
     a, b, c, d = np.zeros(len(X)-1), np.zeros(len(X)-1), np.zeros(len(X)-1), np.zeros(len(X)-1)
 
     # Número de splines
-    n = len(X) - 1
+    n = X.shape[0] - 1
 
     # a é o valor de Y nos pontos X
-    a =  Y[:-1]
+    a = Y[:-1]
 
     # h é a diferença entre os pontos X
     # h[i] = X[i+1] - X[i]
@@ -35,13 +35,14 @@ def natural_splines(X: NDArray[np.float64],
     A[n, n] = 1
 
     # Construir o sistema de equações para c
-    for j in range(1, n-1):
+    for j in range(1, n):
         A[j, j - 1] = h[j - 1]
         A[j, j] = 2 * (h[j - 1] + h[j])
         A[j, j + 1] = h[j]
 
-        B[j] = (3 / h[j]) * (a[j + 1] - a[j] - (3 / h[j - 1]))
+        B[j] = (3 / h[j]) * (a[j] - a[j - 1]) - (3 / h[j - 1]) * (a[j - 1] - a[j - 2])
 
+    print("N : ", n)
     print("Vetor h\n", h)
     print("Matriz A\n", A)
     print("Matriz B\n", B)
