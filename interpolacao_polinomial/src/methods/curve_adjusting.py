@@ -4,15 +4,16 @@ import os
 from numpy.typing import NDArray
 import numpy as np
 
-# Adicionar o diretório raiz do projeto ao Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+# Adicionar o diretório 'src' (o diretório raiz do projeto de módulos) ao Python path
+# Agora ele vai um nível acima do diretório 'methods' para chegar em 'src'
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from utils.gauss_seidel import (
     gauss_seidel, get_augmented_matrix
 )
 
 def natural_splines(X: NDArray[np.float64],
-            Y: NDArray[np.float64],):
+                    Y: NDArray[np.float64],):
 
     # Inicializar os coeficientes dos splines
     a, b, c, d = np.zeros(len(X)-1), np.zeros(len(X)-1), np.zeros(len(X)-1), np.zeros(len(X)-1)
@@ -34,13 +35,16 @@ def natural_splines(X: NDArray[np.float64],
     A[n, n] = 1
 
     # Construir o sistema de equações para c
-    for j in range(1, n - 1):
+    for j in range(1, n-1):
         A[j, j - 1] = h[j - 1]
         A[j, j] = 2 * (h[j - 1] + h[j])
-        A [j, j + 1] = h[j]
+        A[j, j + 1] = h[j]
 
         B[j] = (3 / h[j]) * (a[j + 1] - a[j] - (3 / h[j - 1]))
 
+    print("Vetor h\n", h)
+    print("Matriz A\n", A)
+    print("Matriz B\n", B)
     augmented_matrix = get_augmented_matrix(A, B)
 
     c = gauss_seidel(augmented_matrix, 1e-8, 500)
