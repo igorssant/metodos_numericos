@@ -15,11 +15,11 @@ from utils.gauss_seidel import (
 def natural_splines(X: NDArray[np.float64],
                     Y: NDArray[np.float64],):
 
-    # Inicializar os coeficientes dos splines
-    a, b, c, d = np.zeros(len(X)-1), np.zeros(len(X)-1), np.zeros(len(X)-1), np.zeros(len(X)-1)
-
     # Número de splines
     n = X.shape[0] - 1
+
+    # Inicializar os coeficientes dos splines
+    a, b, c, d = np.zeros(n), np.zeros(n), np.zeros(n), np.zeros(n)
 
     # a é o valor de Y nos pontos X
     a = Y[:-1]
@@ -34,25 +34,29 @@ def natural_splines(X: NDArray[np.float64],
     A[0, 0] = 1
     A[n, n] = 1
 
-    # Construir o sistema de equações para c
-    for j in range(1, n):
-        A[j, j - 1] = h[j - 1]
-        A[j, j] = 2 * (h[j - 1] + h[j])
-        A[j, j + 1] = h[j]
+    # Construir o sistema de equações para c nos pontos internos
+    for i in range(1, n):
+        A[i, i - 1] = h[i - 1]
+        A[i, i] = 2 * (h[i - 1] + h[i])
+        A[i, i + 1] = h[i]
 
-        B[j] = (3 / h[j]) * (a[j] - a[j - 1]) - (3 / h[j - 1]) * (a[j - 1] - a[j - 2])
+        B[i] = (3 / h[i]) * (Y[i + 1] - Y[i]) - (3 / h[i - 1]) * (Y[i] - Y[i - 1])
 
-    print("N : ", n)
-    print("Vetor h\n", h)
-    print("Matriz A\n", A)
-    print("Matriz B\n", B)
     augmented_matrix = get_augmented_matrix(A, B)
 
-    c = gauss_seidel(augmented_matrix, 1e-8, 500)
+    # Resolver o sistema para encontrar os coeficientes c
+    c = gauss_seidel(augmented_matrix, 1e-6, 200)
 
-    for j in range(1, n - 1):
-        b[j] = (1 / h[j - 1]) * (a[j] - a[j - 1]) - (h[j - 1] / 3) * (2 * c[j - 1] + c[j])
-        d[j] = (1 / (3 * h[j])) * (c[j + 1] - c[j])
+
+    # Calcular os coeficientes b
+    for i in range(n):
+        b[i] = (1 / h[i]) * (Y[i + 1] - Y[i]) - (h[i] / 3) * (2 * c[i] + c[i + 1])
+
+    # Calcular os coeficientes d
+    for i in range(n):
+        d[i] = (c[i + 1] - c[i]) / (3 * h[i])
+
+    c = c[:-1]  # Remover o último elemento, pois não é necessário
 
     return a, b, c, d
 
@@ -60,7 +64,7 @@ def natural_splines(X: NDArray[np.float64],
 if __name__  == "__main__":
     # Exemplo de uso
     X = np.array([0, 1, 2, 3], dtype=np.float64)
-    Y = np.array([1, 2, 0, 3], dtype=np.float64)
+    Y = np.array([1, np.e, np.e**2, np.e**3], dtype=np.float64)
 
     a, b, c, d = natural_splines(X, Y)
 
