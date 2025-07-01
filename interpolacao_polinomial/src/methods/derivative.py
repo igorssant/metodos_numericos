@@ -55,9 +55,9 @@ def regressive_derivative_2(func :Union[str, Callable[[np.float64], np.float64]]
             4 * evaluate_one_variable(func, x_menos_2h) -
             evaluate_one_variable(func, x_menos_3h)) / (h**2)
 
-def derivada_central_1 (func :Union[str, Callable[[np.float64], np.float64]],
-                        x :np.float64,
-                        h :np.float64) -> np.float64:
+def central_derivative_1(func :Union[str, Callable[[np.float64], np.float64]],
+                         x :np.float64,
+                         h :np.float64) -> np.float64:
     x_mais_h :np.float64 = x + h
     x_mais_2h :np.float64 = np.float64(x + 2.0 * h)
     x_menos_h :np.float64 = x - h
@@ -68,9 +68,9 @@ def derivada_central_1 (func :Union[str, Callable[[np.float64], np.float64]],
             8 * evaluate_one_variable(func, x_menos_h) +
             evaluate_one_variable(func, x_menos_2h)) / (12 * h)
 
-def derivada_central_2(func :Union[str, Callable[[np.float64], np.float64]],
-                       x :np.float64,
-                       h :np.float64) -> np.float64:
+def central_derivative_2(func :Union[str, Callable[[np.float64], np.float64]],
+                         x :np.float64,
+                         h :np.float64) -> np.float64:
     x_mais_h :np.float64 = x + h
     x_mais_2h :np.float64 = np.float64(x + 2.0 * h)
     x_menos_h :np.float64 = x - h
