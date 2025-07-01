@@ -87,7 +87,8 @@ def simpson38_integral(func :Union[str, Callable[[np.float64], np.float64]],
     return (b - a) *\
            (evaluate_one_variable(func, a) + 3 *\
            evaluate_one_variable(func, mid_points[0]) +\
-           3 * func(mid_points[1]) +  evaluate_one_variable(func, b)) / 8
+           3 * evaluate_one_variable(func, mid_points[1]) +\
+           evaluate_one_variable(func, b)) / 8
 
 def richards_extrapolation(func :Union[str, Callable[[np.float64], np.float64]],
                            a :np.float64,
