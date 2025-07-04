@@ -124,7 +124,9 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 Este projeto está sob licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 ## 👨‍💻 Autores
-
+**Igor Sousa dos Santos Santana**
+- Email: igorssant@hotmail.com | issantos.ppgmc@uesc.br
+- GitHub: [@igorSantana](https://github.com/issant)
 **Matheus Santos Silva**
 - Email: mssilva.ppgmc@uesc.br
 - GitHub: [@matheusssilva991](https://github.com/matheusssilva991)
