@@ -1,6 +1,6 @@
 import sys
 import os
-from typing import Tuple
+from typing import Callable, Tuple
 from numpy.typing import NDArray
 import numpy as np
 
@@ -9,6 +9,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from utils.gauss_seidel import gauss_seidel, get_augmented_matrix
+from utils.parser import evaluate_one_variable, get_derivative
 
 
 def natural_splines(
@@ -162,14 +163,120 @@ def get_spline_func_str(
 
 
 if __name__ == "__main__":
-    # Exemplo de uso
-    X = np.array([0, 1, 2, 3], dtype=np.float64)
-    Y = np.array([1, np.e, np.e**2, np.e**3], dtype=np.float64)
-
-    a, b, c, d = natural_splines(X, Y)
-
-    print("Coeficientes dos splines:")
-    print("a:", a)
-    print("b:", b)
-    print("c:", c)
-    print("d:", d)
+    func :str = "cos(pi * x)"
+    true_derivs_5 :NDArray[np.float64] = np.array([
+        [0.0,
+         np.pi * np.sqrt(2.0) / 2.0,
+         -np.pi,
+         -np.pi * np.sqrt(2.0) / 2.0,
+         0.0],
+        [-np.pi**2,
+         np.pi**2 * np.sqrt(2.0) / 2.0,
+         0.0,
+         np.pi**2 * np.sqrt(2.0) / 2.0,
+         np.pi**2]
+        ], dtype=np.float64)
+    true_derivs_7 :NDArray[np.float64] = np.array([
+        [0.0,
+         -np.pi * np.sqrt(2.0 - np.sqrt(2.0)) / 2.0,
+         -np.pi * np.sqrt(2.0) / 2.0,
+         -np.pi * np.sqrt(2.0 + np.sqrt(2.0)) / 2.0,
+         -np.pi,
+         -np.pi * np.sqrt(2.0 + np.sqrt(2.0)) / 2.0,
+         -np.pi * np.sqrt(2.0) / 2.0,
+         -np.pi * np.sqrt(2.0 - np.sqrt(2.0)) / 2.0,
+         0.0],
+        [-np.pi**2,
+         -np.pi**2 * np.sqrt(2.0 + np.sqrt(2.0)) / 2.0,
+         -np.pi**2 * np.sqrt(2.0) / 2.0,
+         -np.pi**2 * np.sqrt(2.0 - np.sqrt(2.0)) / 2.0,
+         0.0,
+         -np.pi**2 * (-np.sqrt(2.0 - np.sqrt(2.0))) / 2.0,
+         -np.pi**2 * (-np.sqrt(2.0)) / 2.0,
+         -np.pi**2 * (-np.sqrt(2.0 + np.sqrt(2.0))) / 2.0,
+         np.pi**2]
+        ], dtype=np.float64)
+    
+    print("Caso NATURAL:")
+    
+    x :NDArray[np.float64] = np.array([0.0, 0.25, 0.5, 0.75, 1.0], dtype=np.float64)
+    y :NDArray[np.float64] = np.array([evaluate_one_variable(func, el) for el in x], dtype=np.float64)
+    derivatives_list :NDArray[np.float64] = np.zeros((2, x.shape[0]),
+                                                     dtype=np.float64)
+    coefs :Tuple[np.float64,
+                 np.float64,
+                 np.float64,
+                 np.float64] = cubic_splines(x,y)
+    
+    for i in range(x.shape[0]):
+        spline_func :str = get_spline_func_str(x[i], *coefs, x)
+        derivative_func :Callable[[float], np.float64] = get_derivative(spline_func, degree=1)
+        derivative_func_2 :Callable[[float], np.float64] = get_derivative(spline_func, degree=2)
+        derivatives_list[0, i] = derivative_func(x[i])
+        derivatives_list[1, i] = derivative_func_2(x[i])
+        
+    print("Derivadas de S_5:\n", derivatives_list[:, 0])
+    print("Segunda derivadas de S_5:\n", derivatives_list[:, 1])
+    print("Erro primeira derivada:\n", abs(true_derivs_5[0, :] - derivatives_list[0, :]))
+    print("Erro segunda derivada:\n", abs(true_derivs_5[1, :] - derivatives_list[1, :]))
+    
+    x = np.array([0.0, 0.125, 0.250, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0], dtype=np.float64)
+    y = np.array([evaluate_one_variable(func, el) for el in x], dtype=np.float64)
+    derivatives_list = np.zeros((2, x.shape[0]), dtype=np.float64)
+    coefs = cubic_splines(x,y)
+    
+    for i in range(x.shape[0]):
+        spline_func :str = get_spline_func_str(x[i], *coefs, x)
+        derivative_func :Callable[[float], np.float64] = get_derivative(spline_func, degree=1)
+        derivative_func_2 :Callable[[float], np.float64] = get_derivative(spline_func, degree=2)
+        derivatives_list[0, i] = derivative_func(x[i])
+        derivatives_list[1, i] = derivative_func_2(x[i])
+        
+    print("Derivadas de S_9: ", derivatives_list[:, 0])
+    print("Segunda derivadas de S_9: ", derivatives_list[:, 1])
+    print("Erro primeira derivada:\n", abs(true_derivs_7[0, :] - derivatives_list[0, :]))
+    print("Erro segunda derivada:\n", abs(true_derivs_7[1, :] - derivatives_list[1, :]))
+    print("\n=================================================")
+    print("Caso FIXADO:")
+    
+    deriv :Callable[[float], np.float64] = get_derivative(func)
+    
+    x = np.array([0.0, 0.25, 0.5, 0.75, 1.0], dtype=np.float64)
+    y = np.array([evaluate_one_variable(func, el) for el in x], dtype=np.float64)
+    derivatives_list = np.zeros((2, x.shape[0]), dtype=np.float64)
+    coefs = cubic_splines(x,
+                          y,
+                          dx_0=deriv(x[0]),
+                          dx_n=deriv(x[-1]))
+    
+    for i in range(x.shape[0]):
+        spline_func :str = get_spline_func_str(x[i], *coefs, x)
+        derivative_func :Callable[[float], np.float64] = get_derivative(spline_func, degree=1)
+        derivative_func_2 :Callable[[float], np.float64] = get_derivative(spline_func, degree=2)
+        derivatives_list[0, i] = derivative_func(x[i])
+        derivatives_list[1, i] = derivative_func_2(x[i])
+        
+    print("Derivadas de S_5: ", derivatives_list[:, 0])
+    print("Segunda derivadas de S_5: ", derivatives_list[:, 1])
+    print("Erro primeira derivada:\n", abs(true_derivs_5[0, :] - derivatives_list[0, :]))
+    print("Erro segunda derivada:\n", abs(true_derivs_5[1, :] - derivatives_list[1, :]))
+    
+    x = np.array([0.0, 0.125, 0.250, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0], dtype=np.float64)
+    y = np.array([evaluate_one_variable(func, el) for el in x], dtype=np.float64)
+    derivatives_list = np.zeros((2, x.shape[0]), dtype=np.float64)
+    coefs = cubic_splines(x,
+                          y,
+                          dx_0=deriv(x[0]),
+                          dx_n=deriv(x[-1]))
+    
+    for i in range(x.shape[0]):
+        spline_func :str = get_spline_func_str(x[i], *coefs, x)
+        derivative_func :Callable[[float], np.float64] = get_derivative(spline_func, degree=1)
+        derivative_func_2 :Callable[[float], np.float64] = get_derivative(spline_func, degree=2)
+        derivatives_list[0, i] = derivative_func(x[i])
+        derivatives_list[1, i] = derivative_func_2(x[i])
+        
+    print("Derivadas de S_9: ", derivatives_list[:, 0])
+    print("Segunda derivadas de S_9: ", derivatives_list[:, 1])
+    print("Erro primeira derivada:\n", abs(true_derivs_7[0, :] - derivatives_list[0, :]))
+    print("Erro segunda derivada:\n", abs(true_derivs_7[1, :] - derivatives_list[1, :]))
