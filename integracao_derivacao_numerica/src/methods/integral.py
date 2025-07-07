@@ -22,11 +22,11 @@ def trapezoid_integral(func :Union[str, Callable[[np.float64], np.float64]],
 def multiple_trapezoid_integral(func :Union[str, Callable[[np.float64], np.float64]],
                                 a :np.float64,
                                 b :np.float64,
-                                n :int) -> np.float64:
-    if n < 1:
+                                n :np.int64) -> np.float64:
+    if n < np.int64(1):
         raise ValueError("O número de pontos (n) deve ser pelo menos 1.")
 
-    h :int = int((b - a) / n)
+    h :np.float64 = np.float64((b - a) / n)
     x :np.float64 = a
     summ :np.float64 = evaluate_one_variable(func, x)
 
@@ -51,7 +51,7 @@ def simpson13_integral(func :Union[str, Callable[[np.float64], np.float64]],
 def multiple_simpson13_integral(func :Union[str, Callable[[np.float64], np.float64]],
                                 a :np.float64,
                                 b :np.float64,
-                                n :int) -> np.float64:
+                                n :np.int64) -> np.float64:
     if n < 1:
         raise ValueError("O número de pontos (n) deve ser pelo menos 1.")
 
@@ -102,15 +102,15 @@ def richards_extrapolation(func :Union[str, Callable[[np.float64], np.float64]],
 def gauss_quadrature(func :str,
                      a :np.float64,
                      b :np.float64,
-                     n :int) -> np.float64:
+                     n :np.int64) -> np.float64:
     if not isinstance(func, str):
         raise ValueError("A função (func) deve ser uma string.")
 
-    if n < 1:
+    if n < np.int64(1):
         raise ValueError("O número de pontos (n) deve ser pelo menos 1.")
 
-    tables :list[Callable] = [legendre_table, tchebyshev_table, laguerre_table, hermite_table]
-    table :Callable = tables[0]
+    tables :list[Callable[[int], dict]] = [legendre_table, tchebyshev_table, laguerre_table, hermite_table]
+    table :Callable[[int], dict] = tables[0]
 
     if re.match(r"\s*\(?\s*1\s*/\s*(np\.sqrt|sqrt)\(\s*1\s*-\s*x\s*\*\*\s*2\s*\)\s*\)?\s*\*\s*", func):
         print("Tchebyshev")

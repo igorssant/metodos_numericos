@@ -14,7 +14,7 @@ from utils.parser import evaluate_one_variable
 def progressive_derivative_1(func :Union[str, Callable[[np.float64], np.float64]],
                              x :np.float64,
                              h :np.float64) -> np.float64:
-    if h == np.float64(0.0):
+    if h <= np.float64(0.0):
         raise ValueError("O tamanho do passo *h* não pode ser zero.")
 
     x_plus_h :np.float64 = x + h
@@ -27,7 +27,7 @@ def progressive_derivative_1(func :Union[str, Callable[[np.float64], np.float64]
 def progressive_derivative_2(func :Union[str, Callable[[np.float64], np.float64]],
                              x :np.float64,
                              h :np.float64) -> np.float64:
-    if h == np.float64(0.0):
+    if h <= np.float64(0.0):
         raise ValueError("O tamanho do passo *h* não pode ser zero.")
 
     x_plus_h :np.float64 = x + h
@@ -42,7 +42,7 @@ def progressive_derivative_2(func :Union[str, Callable[[np.float64], np.float64]
 def regressive_derivative_1(func :Union[str, Callable[[np.float64], np.float64]],
                             x :np.float64,
                             h :np.float64) -> np.float64:
-    if h == np.float64(0.0):
+    if h >= np.float64(0.0):
         raise ValueError("O tamanho do passo *h* não pode ser zero.")
 
     x_menos_h :np.float64 = x - h
@@ -55,7 +55,7 @@ def regressive_derivative_1(func :Union[str, Callable[[np.float64], np.float64]]
 def regressive_derivative_2(func :Union[str, Callable[[np.float64], np.float64]],
                             x :np.float64,
                             h :np.float64) -> np.float64:
-    if h == np.float64(0.0):
+    if h >= np.float64(0.0):
         raise ValueError("O tamanho do passo *h* não pode ser zero.")
     
     x_menos_h :np.float64 = x - h
@@ -114,8 +114,8 @@ def forward_difference_euler(func :Union[str, Callable[[np.float64], np.float64]
 def backward_difference_euler(func :Union[str, Callable[[np.float64], np.float64]],
                               x0 :np.float64,
                               h :np.float64) -> np.float64:
-    if h <= np.float64(0.0):
-        raise ValueError("O tamanho do passo 'h' deve ser um valor positivo.")
+    if h >= np.float64(0.0):
+        raise ValueError("O tamanho do passo 'h' deve ser um valor menor que zero.")
 
     fx_0 :np.float64 = evaluate_one_variable(func, x0)
     fx_minus_h = evaluate_one_variable(func, x0 - h)
