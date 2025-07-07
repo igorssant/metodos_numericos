@@ -42,6 +42,5 @@ def evaluate_one_variable(function: Union[str, Callable], x0:np.float64) -> np.f
     else:
         raise ValueError("A função deve ser uma string ou um callable.")
 
-
     return np.float64(result)
 

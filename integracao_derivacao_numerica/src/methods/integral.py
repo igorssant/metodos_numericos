@@ -112,13 +112,13 @@ def gauss_quadrature(func :str,
     tables :list[Callable] = [legendre_table, tchebyshev_table, laguerre_table, hermite_table]
     table :Callable = tables[0]
 
-    if re.match("\s*\(*\s*1\s*/\s*(np.sqrt|sqrt)\(\s*1\s*-\s*x\s*\*\*\s*2\s*\)\s*\)*\s*\*\s*", func):
+    if re.match(r"\s*\(?\s*1\s*/\s*(np\.sqrt|sqrt)\(\s*1\s*-\s*x\s*\*\*\s*2\s*\)\s*\)?\s*\*\s*", func):
         print("Tchebyshev")
         table = tables[1]
-    elif re.match("\s*\(*\s*((np|math).exp\(\s*-x\s*\*\*\s*2\s*\)|math.e\s*\*\*\s*-x\s*\*\*\s*2)\s*\)*\s*\**\s*", func):
+    elif re.match(r"\s*\(?\s*((np|math)\.exp\(\s*-x\s*\*\*\s*2\s*\)|math\.e\s*\*\*\s*-x\s*\*\*\s*2)\s*\)?\s*\*\s*", func):
         print("Hermite")
         table = tables[3]
-    elif re.match("\s*\(*\s*((np|math).exp\(\s*-x\s*\)|math.e\s*\*\*\s*-x\s*)\s*\)*\s*\**\s*", func):
+    elif re.match(r"\s*\(?\s*((np|math)\.exp\(\s*-x\s*\)|math\.e\s*\*\*\s*-x\s*)\s*\)?\s*\*\s*", func):
         print("Laguerre")
         table = tables[2]
 
