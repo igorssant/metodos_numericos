@@ -144,3 +144,22 @@ def gauss_quadrature(func :str,
         final_result[i] = c[i] * evaluate_one_variable(func, x[i])
 
     return final_result.sum()
+
+def simpson_integration(func :Union[str, Callable[[np.float64], np.float64]],
+                        a :np.float64,
+                        b :np.float64,
+                        h :np.float64,) -> np.float64:
+    n :np.int64 = np.int64(round((b - a) / h))
+    
+    integral :np.float64 = evaluate_one_variable(func, a) +\
+                           evaluate_one_variable(func, b)
+    
+    for i in range(1, n, 2):
+        xi :np.float64 = a + i * h
+        integral += 4 * evaluate_one_variable(func, xi)
+
+    for i in range(2, n - 1, 2):
+        xi = a + i * h
+        integral += 2 * evaluate_one_variable(func, xi)
+
+    return integral * (h / 3)
